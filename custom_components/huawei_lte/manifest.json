@@ -1,0 +1,34 @@
+{
+  "domain": "huawei_lte",
+  "name": "Huawei LTE (antibill51 fork)",
+  "codeowners": [
+    "@antibill51"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/antibill51/ha-huawei-lte",
+  "issue_tracker": "https://github.com/antibill51/ha-huawei-lte/issues",
+  "integration_type": "device",
+  "iot_class": "local_polling",
+  "loggers": [
+    "huawei_lte_api.Session"
+  ],
+  "requirements": [
+    "huawei-lte-api==1.11.0",
+    "url-normalize==3.0.0"
+  ],
+  "version": "2026.8.1",
+  "ssdp": [
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "Huawei"
+    },
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "Huawei Technologies Co., Ltd."
+    },
+    {
+      "deviceType": "urn:schemas-upnp-org:device:InternetGatewayDevice:1",
+      "manufacturer": "SOYEA TECHNOLOGY CO., LTD."
+    }
+  ]
+}

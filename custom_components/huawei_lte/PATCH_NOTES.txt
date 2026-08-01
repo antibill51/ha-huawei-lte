@@ -1,0 +1,36 @@
+NOTE — strings.json / icons.json / translations
+=================================================
+
+Ce patch ne modifie PAS les entités (sensor.py, select.py, switch.py,
+device_tracker.py, notify.py, diagnostics.py) ni leurs traductions.
+
+Pour ces fichiers, copiez-les tels quels depuis votre installation Home
+Assistant actuelle (dossier core huawei_lte, même version), car ils sont
+strictement identiques à l'intégration native.
+
+Seuls les fichiers suivants, inclus dans cette archive, diffèrent de la
+version native :
+
+  - __init__.py       -> mémorise les endpoints non supportés (fix du
+                         warning répété au démarrage) + nouveau service
+                         reset_unsupported_endpoints
+  - const.py          -> nouvelles constantes CONF_UNSUPPORTED_KEYS et
+                         SERVICE_RESET_UNSUPPORTED_ENDPOINTS
+  - config_flow.py    -> case à cocher "reset_unsupported_endpoints" dans
+                         les options de l'intégration
+  - manifest.json     -> domaine "huawei_lte" conservé (remplace l'officiel)
+  - services.yaml     -> ajout du nouveau service
+
+Ajoutez dans votre strings.json existant, sous "options.step.init.data" :
+
+  "reset_unsupported_endpoints": "Réinitialiser les endpoints non supportés"
+
+et sous "options.step.init.data_description" :
+
+  "reset_unsupported_endpoints": "Cochez pour oublier la liste des
+  fonctionnalités précédemment détectées comme non supportées par ce
+  routeur (lan_host_info, wlan_host_list, etc.) et les réessayer au
+  prochain rechargement."
+
+et dans "services", ajoutez un bloc "reset_unsupported_endpoints" analogue
+à "resume_integration" (nom, description, champ url).

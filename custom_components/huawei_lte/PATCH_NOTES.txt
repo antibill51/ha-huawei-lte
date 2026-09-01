@@ -1,36 +1,38 @@
-NOTE — strings.json / icons.json / translations
-=================================================
+PATCH NOTES — Intégration Huawei LTE (fork antibill51)
+======================================================
 
-Ce patch ne modifie PAS les entités (sensor.py, select.py, switch.py,
-device_tracker.py, notify.py, diagnostics.py) ni leurs traductions.
+Ce composant personnalisé améliore l'intégration native `huawei_lte` de Home Assistant avec des fonctionnalités avancées pour la gestion des routeurs / clés 4G Huawei (ex: E3372, B525, B715, B818, etc.) :
 
-Pour ces fichiers, copiez-les tels quels depuis votre installation Home
-Assistant actuelle (dossier core huawei_lte, même version), car ils sont
-strictement identiques à l'intégration native.
+1. Mémorisation des endpoints non supportés
+-------------------------------------------
+- Mémorise automatiquement les endpoints rejetés ou non gérés par le modèle de routeur spécifique (ex: lan_host_info, wlan_host_list, wifi_feature_switch sur les clés E3372).
+- Évite les warnings et logs répétitifs à chaque démarrage de Home Assistant.
+- Ajout du service `huawei_lte.reset_unsupported_endpoints` et d'une case à cocher dans les options pour forcer une nouvelle détection après une mise à jour de firmware.
 
-Seuls les fichiers suivants, inclus dans cette archive, diffèrent de la
-version native :
+2. Gestion complète et robuste de l'envoi de SMS
+------------------------------------------------
+- Résolution définitive de l'erreur `125003: Wrong Session Token` sur les clés HiLink.
+- Utilisation de requêtes directes avec négociation de jeton frais (`/api/webserver/SesTokInfo`) et verrou async pour garantir un envoi 100% fiable.
+- Mécanisme de retry automatique en cas d'échec temporaire.
 
-  - __init__.py       -> mémorise les endpoints non supportés (fix du
-                         warning répété au démarrage) + nouveau service
-                         reset_unsupported_endpoints
-  - const.py          -> nouvelles constantes CONF_UNSUPPORTED_KEYS et
-                         SERVICE_RESET_UNSUPPORTED_ENDPOINTS
-  - config_flow.py    -> case à cocher "reset_unsupported_endpoints" dans
-                         les options de l'intégration
-  - manifest.json     -> domaine "huawei_lte" conservé (remplace l'officiel)
-  - services.yaml     -> ajout du nouveau service
+3. Réception SMS & Décodage automatique des accents (Fix Mojibake / UCS-2)
+-------------------------------------------------------------------------
+- Événement Home Assistant `huawei_lte_sms_received` déclenché à chaque nouveau message entrant avec ses métadonnées (`phone`, `message`, `date`, `index`).
+- Capteur d'état `sensor.<device>_dernier_sms_recu` affichant le dernier message reçu.
+- Décodeur universel `_clean_sms_content` intégrant :
+  * Le décodage direct des octets bruts XML (évite le forçage ISO-8859-1 de requests.text).
+  * La détection et réparation automatique du double encodage UTF-8 (mojibake : `Ã©` -> `é`, `Ã ` -> `à`, `Ã¨` -> `è`, `Ã§` -> `ç`, `â€™` -> `’`, etc.).
+  * Le décodage des trames brutes hexadécimales UCS-2 / UTF-16 BE transmises par certains modems.
 
-Ajoutez dans votre strings.json existant, sous "options.step.init.data" :
-
-  "reset_unsupported_endpoints": "Réinitialiser les endpoints non supportés"
-
-et sous "options.step.init.data_description" :
-
-  "reset_unsupported_endpoints": "Cochez pour oublier la liste des
-  fonctionnalités précédemment détectées comme non supportées par ce
-  routeur (lan_host_info, wlan_host_list, etc.) et les réessayer au
-  prochain rechargement."
-
-et dans "services", ajoutez un bloc "reset_unsupported_endpoints" analogue
-à "resume_integration" (nom, description, champ url).
+4. Gestion du stockage, suppression automatique et purge de la mémoire
+----------------------------------------------------------------------
+- Option Config Flow : "Supprimer automatiquement les SMS entrants après réception" (`auto_delete_sms`).
+- Suppression automatique des accusés de réception (type 7).
+- Services Home Assistant disponibles :
+  * `huawei_lte.delete_sms` : Supprime un SMS précis par son index (`index`).
+  * `huawei_lte.clear_sms_inbox` : Supprime tous les SMS de la boîte de réception.
+  * `huawei_lte.clear_sms_drafts` : Supprime tous les SMS brouillons (drafts).
+  * `huawei_lte.clear_sms_sent` : Supprime l'historique des SMS envoyés.
+  * `huawei_lte.clear_sms_reports` : Supprime les accusés de réception et messages de statut résiduels.
+  * `huawei_lte.clear_all_sms` : Purge totale de la mémoire du modem (boîtes 1, 2, 3 et 4).
+  * `huawei_lte.resend_sms_drafts` : Tente de renvoyer automatiquement tous les brouillons stockés vers leurs destinataires et les supprime en cas de succès.

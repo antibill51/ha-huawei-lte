@@ -389,16 +389,16 @@
           "recipient": "SMS notification recipients",
           "track_wired_clients": "Track wired network clients",
           "unauthenticated_mode": "Unauthenticated mode (change requires reload)",
-          "auto_delete_sms": "Supprimer automatiquement les SMS entrants après réception",
-          "reset_unsupported_endpoints": "Réinitialiser les endpoints non supportés"
+          "auto_delete_sms": "Automatically delete incoming SMS after receipt",
+          "reset_unsupported_endpoints": "Reset unsupported endpoints"
         },
         "data_description": {
           "name": "Used to distinguish between notification services in case there are multiple Huawei LTE devices configured. Changes to this option value take effect after Home Assistant restart.",
           "recipient": "Comma-separated list of default recipient SMS phone numbers for the notification service, used in case the notification sender does not specify any.",
           "track_wired_clients": "Whether the device tracker entities track also clients attached to the router's wired Ethernet network, in addition to wireless clients.",
           "unauthenticated_mode": "Whether to run in unauthenticated mode. Unauthenticated mode provides a limited set of features, but may help in case there are problems accessing the router's web interface from a browser while the integration is active. Changes to this option value take effect after integration reload.",
-          "auto_delete_sms": "Supprime immédiatement chaque SMS entrant (boîte de réception / SIM) dès qu'il a été traité pour éviter de saturer la mémoire du modem.",
-          "reset_unsupported_endpoints": "Cochez pour oublier la liste des fonctionnalités précédemment détectées comme non supportées et les réessayer au prochain rechargement."
+          "auto_delete_sms": "Immediately delete each incoming SMS from the modem / SIM storage once processed to prevent memory saturation.",
+          "reset_unsupported_endpoints": "Check this to forget the list of features previously detected as unsupported by this router (lan_host_info, etc.) and retry them."
         }
       }
     }
@@ -424,79 +424,89 @@
       },
       "name": "Suspend integration"
     },
-    "clear_sms_reports": {
-      "description": "Supprime les accusés de réception et rapports de statut SMS du modem.",
+    "reset_unsupported_endpoints": {
+      "name": "Reset unsupported endpoints",
+      "description": "Forget the list of ignored router endpoints to re-test their support.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router to reset the list for (optional when only one is configured)."
         }
-      },
-      "name": "Nettoyer les accusés SMS"
+      }
+    },
+    "clear_sms_reports": {
+      "name": "Clear SMS delivery reports",
+      "description": "Deletes delivery reports and status SMS from modem storage.",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "URL of router."
+        }
+      }
     },
     "delete_sms": {
-      "description": "Supprime un SMS précis par son numéro d'index (ex: trigger.event.data.index).",
+      "name": "Delete SMS",
+      "description": "Deletes a specific SMS by its index number (e.g. trigger.event.data.index or sensor attribute).",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         },
         "index": {
-          "description": "Index du message à supprimer.",
-          "name": "Index"
+          "name": "Index",
+          "description": "Index number of message to delete."
         }
-      },
-      "name": "Supprimer un SMS"
+      }
     },
     "clear_sms_inbox": {
-      "description": "Supprime tous les SMS de la boîte de réception pour libérer totalement la mémoire du modem.",
+      "name": "Clear SMS inbox",
+      "description": "Deletes all received SMS messages in the inbox to free modem storage.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         }
-      },
-      "name": "Vider la boîte de réception SMS"
+      }
     },
     "clear_sms_drafts": {
-      "description": "Supprime tous les SMS brouillons (drafts) stockés sur le modem.",
+      "name": "Clear SMS drafts",
+      "description": "Deletes all draft SMS messages stored on the modem.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         }
-      },
-      "name": "Vider les brouillons SMS"
+      }
     },
     "clear_sms_sent": {
-      "description": "Supprime l'historique des SMS envoyés stockés sur le modem.",
+      "name": "Clear sent SMS",
+      "description": "Deletes sent SMS history from the modem.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         }
-      },
-      "name": "Vider les SMS envoyés"
+      }
     },
     "clear_all_sms": {
-      "description": "Supprime tous les SMS (reçus, envoyés, brouillons) pour libérer totalement la mémoire.",
+      "name": "Purge all SMS storage",
+      "description": "Deletes all SMS messages (inbox, sent, drafts, outbox) to completely clear modem memory.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         }
-      },
-      "name": "Purger toute la mémoire SMS"
+      }
     },
     "resend_sms_drafts": {
-      "description": "Tente de renvoyer tous les messages brouillons (drafts) et les supprime en cas de succès.",
+      "name": "Resend SMS drafts",
+      "description": "Attempts to send all draft messages to their recipients and deletes them on success.",
       "fields": {
         "url": {
-          "description": "URL du routeur.",
-          "name": "URL"
+          "name": "URL",
+          "description": "URL of router."
         }
-      },
-      "name": "Renvoyer les brouillons SMS"
+      }
     }
   }
 }

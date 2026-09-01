@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import ipaddress
 import logging
 import re
-from typing import override
+from typing import Any, override
 
 from homeassistant.components.sensor import (
     DOMAIN as SENSOR_DOMAIN,
@@ -40,6 +40,7 @@ from .const import (
     KEY_NET_CURRENT_PLMN,
     KEY_NET_NET_MODE,
     KEY_SMS_SMS_COUNT,
+    KEY_SMS_LAST_RECEIVED,
     SENSOR_KEYS,
 )
 from .entity import HuaweiLteBaseEntityWithDevice
@@ -824,6 +825,7 @@ async def async_setup_entry(
                 continue
             sensors.append(HuaweiLteSensor(router, key, item, desc))
 
+    sensors.append(HuaweiLteLastSmsSensor(router))
     async_add_entities(sensors, True)
 
 
@@ -940,3 +942,82 @@ class HuaweiLteSensor(HuaweiLteBaseEntityWithDevice, SensorEntity):
         self._state, self._unit = self.entity_description.format_fn(value)
         self._last_reset = last_reset
         self._available = value is not None
+
+
+def _clean_sms_content(raw_content: str) -> str:
+    """Decode and clean SMS content (UCS-2 hex, double-encoded UTF-8 mojibake)."""
+    if not raw_content:
+        return ""
+    s = raw_content.strip()
+    if len(s) >= 4 and len(s) % 4 == 0 and all(c in "0123456789abcdefABCDEF" for c in s):
+        try:
+            decoded = bytes.fromhex(s).decode("utf-16-be")
+            if decoded and all(ord(c) >= 32 or c in "\n\r\t" for c in decoded):
+                return decoded
+        except Exception:
+            pass
+
+    text = raw_content
+    for _ in range(2):
+        if any(c in text for c in ("Ã", "Â", "â", "ã", "ä")):
+            try:
+                candidate = text.encode("latin-1").decode("utf-8")
+                text = candidate
+            except (UnicodeEncodeError, UnicodeDecodeError):
+                break
+        else:
+            break
+    return text
+
+
+class HuaweiLteLastSmsSensor(HuaweiLteBaseEntityWithDevice, SensorEntity):
+    """Sensor showing the last received incoming SMS."""
+
+    _attr_icon = "mdi:message-text"
+    _attr_has_entity_name = True
+    _attr_name = "Dernier SMS reçu"
+
+    def __init__(self, router: Router) -> None:
+        """Initialize."""
+        super().__init__(router)
+        self._state: str | None = None
+        self._attributes: dict[str, Any] = {}
+        self._update_internal_state()
+
+    def _update_internal_state(self) -> None:
+        data = self.router.data.get(KEY_SMS_LAST_RECEIVED)
+        if data and isinstance(data, dict) and data.get("message"):
+            clean_msg = _clean_sms_content(str(data["message"]))
+            self._state = clean_msg[:255]
+            self._attributes = {
+                "phone": data.get("phone", ""),
+                "date": data.get("date", ""),
+                "index": data.get("index", ""),
+                "full_message": clean_msg,
+            }
+        else:
+            self._state = "Aucun"
+            self._attributes = {}
+
+    @property
+    @override
+    def _device_unique_id(self) -> str:
+        return "sms.last_received"
+
+    @property
+    @override
+    def native_value(self) -> str | None:
+        """Return text of last received SMS."""
+        return self._state
+
+    @property
+    @override
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return SMS metadata."""
+        return self._attributes
+
+    @override
+    async def async_update(self) -> None:
+        """Sensor is updated when router data updates."""
+        self._update_internal_state()
+        self._available = True

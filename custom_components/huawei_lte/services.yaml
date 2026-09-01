@@ -15,6 +15,76 @@ suspend_integration:
 reset_unsupported_endpoints:
   fields:
     url:
-      example: http://192.168.100.1/
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+clear_sms_reports:
+  name: Nettoyer les accusés de réception SMS
+  description: Supprime les accusés de réception et messages de statut pour libérer la mémoire SMS du modem Huawei LTE.
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+delete_sms:
+  name: Supprimer un SMS
+  description: Supprime un SMS précis par son numéro d'index (ex: trigger.event.data.index ou capteur).
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+    index:
+      name: Index du message
+      description: Numéro d'index du SMS
+      required: true
+      example: 40010
+      selector:
+        text:
+
+clear_sms_inbox:
+  name: Vider la boîte de réception SMS
+  description: Supprime tous les SMS reçus de la boîte de réception pour libérer la mémoire du modem Huawei LTE.
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+clear_sms_drafts:
+  name: Vider les brouillons SMS
+  description: Supprime tous les SMS brouillons (drafts) stockés sur le modem Huawei LTE.
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+clear_sms_sent:
+  name: Vider les SMS envoyés
+  description: Supprime l'historique des SMS envoyés stockés sur le modem Huawei LTE.
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+clear_all_sms:
+  name: Purger toute la mémoire SMS
+  description: Supprime tous les SMS (reçus, envoyés, brouillons, boîte d'envoi) pour libérer totalement la mémoire du modem Huawei LTE.
+  fields:
+    url:
+      example: http://192.168.8.1/
+      selector:
+        text:
+
+resend_sms_drafts:
+  name: Renvoyer les brouillons SMS
+  description: Tente de renvoyer tous les messages brouillons (drafts) vers leurs destinataires et les supprime en cas de succès.
+  fields:
+    url:
+      example: http://192.168.8.1/
       selector:
         text:

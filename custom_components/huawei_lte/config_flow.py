@@ -42,12 +42,14 @@ from homeassistant.helpers.service_info.ssdp import (
 
 from . import HuaweiLteConfigEntry
 from .const import (
+    CONF_AUTO_DELETE_SMS,
     CONF_MANUFACTURER,
     CONF_TRACK_WIRED_CLIENTS,
     CONF_UNAUTHENTICATED_MODE,
     CONF_UNSUPPORTED_KEYS,
     CONF_UPNP_UDN,
     CONNECTION_TIMEOUT,
+    DEFAULT_AUTO_DELETE_SMS,
     DEFAULT_DEVICE_NAME,
     DEFAULT_NOTIFY_SERVICE_NAME,
     DEFAULT_TRACK_WIRED_CLIENTS,
@@ -417,6 +419,12 @@ class HuaweiLteOptionsFlow(OptionsFlow):
                     CONF_UNAUTHENTICATED_MODE,
                     default=self.config_entry.options.get(
                         CONF_UNAUTHENTICATED_MODE, DEFAULT_UNAUTHENTICATED_MODE
+                    ),
+                ): bool,
+                vol.Optional(
+                    CONF_AUTO_DELETE_SMS,
+                    default=self.config_entry.options.get(
+                        CONF_AUTO_DELETE_SMS, DEFAULT_AUTO_DELETE_SMS
                     ),
                 ): bool,
                 vol.Optional(

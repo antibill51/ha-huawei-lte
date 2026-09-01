@@ -28,16 +28,35 @@ UPDATE_SIGNAL = f"{DOMAIN}_update"
 
 CONNECTION_TIMEOUT = 10
 
+CONF_AUTO_DELETE_SMS = "auto_delete_sms"
+DEFAULT_AUTO_DELETE_SMS = False
+
 SERVICE_RESUME_INTEGRATION = "resume_integration"
 SERVICE_SUSPEND_INTEGRATION = "suspend_integration"
 # NEW: lets a user force re-probing of endpoints previously marked
 # unsupported (e.g. after a firmware update re-enabled a feature).
 SERVICE_RESET_UNSUPPORTED_ENDPOINTS = "reset_unsupported_endpoints"
+SERVICE_CLEAR_SMS_REPORTS = "clear_sms_reports"
+SERVICE_DELETE_SMS = "delete_sms"
+SERVICE_CLEAR_SMS_INBOX = "clear_sms_inbox"
+SERVICE_CLEAR_SMS_DRAFTS = "clear_sms_drafts"
+SERVICE_CLEAR_SMS_SENT = "clear_sms_sent"
+SERVICE_CLEAR_ALL_SMS = "clear_all_sms"
+SERVICE_RESEND_SMS_DRAFTS = "resend_sms_drafts"
+
+EVENT_SMS_RECEIVED = "huawei_lte_sms_received"
 
 ADMIN_SERVICES = {
     SERVICE_RESUME_INTEGRATION,
     SERVICE_SUSPEND_INTEGRATION,
     SERVICE_RESET_UNSUPPORTED_ENDPOINTS,
+    SERVICE_CLEAR_SMS_REPORTS,
+    SERVICE_DELETE_SMS,
+    SERVICE_CLEAR_SMS_INBOX,
+    SERVICE_CLEAR_SMS_DRAFTS,
+    SERVICE_CLEAR_SMS_SENT,
+    SERVICE_CLEAR_ALL_SMS,
+    SERVICE_RESEND_SMS_DRAFTS,
 }
 
 KEY_DEVICE_BASIC_INFORMATION = "device_basic_information"
@@ -52,6 +71,7 @@ KEY_MONITORING_TRAFFIC_STATISTICS = "monitoring_traffic_statistics"
 KEY_NET_CURRENT_PLMN = "net_current_plmn"
 KEY_NET_NET_MODE = "net_net_mode"
 KEY_SMS_SMS_COUNT = "sms_sms_count"
+KEY_SMS_LAST_RECEIVED = "sms_last_received"
 KEY_WLAN_HOST_LIST = "wlan_host_list"
 KEY_WLAN_WIFI_FEATURE_SWITCH = "wlan_wifi_feature_switch"
 KEY_WLAN_WIFI_GUEST_NETWORK_SWITCH = "wlan_wifi_guest_network_switch"

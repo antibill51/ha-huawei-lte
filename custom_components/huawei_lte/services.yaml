@@ -29,8 +29,8 @@ clear_sms_reports:
         text:
 
 delete_sms:
-  name: Supprimer un SMS
-  description: Supprime un SMS précis par son numéro d'index (ex: trigger.event.data.index ou capteur).
+  name: "Supprimer un SMS"
+  description: "Supprime un SMS précis par son numéro d'index (ex: trigger.event.data.index ou capteur)."
   fields:
     url:
       example: http://192.168.8.1/
